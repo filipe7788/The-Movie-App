@@ -10,56 +10,86 @@
 import Foundation
 import Alamofire
 import ObjectMapper
+import AlamofireObjectMapper
 
 class BaseRest {
     
-    static let statusValidate = ["0", "9"]
+    let baseURL = "https://api.themoviedb.org/3/"
+    let api_key = "api_key=2bae12ea6f75b14280cce8dc6ea5f242"
+    let endOfURL = "&language=pt-BR"
     
-    static let encoding = JSONEncoding.default
+    var TopMovies:[Movie] = []
+    var PopMovies:[Movie] = []
+    var NowMovies:[Movie] = []
+    var TheMovie:[Movie] = []
+    var Videos:[Video] = []
     
-    static var sessionManager: SessionManager {
-        let session = Alamofire.SessionManager.default
-        let oauthHandler = OAuth2Handler(
-            baseURLString: "https://api.themoviedb.org/3/",
-            accessToken: "2bae12ea6f75b14280cce8dc6ea5f242"
-        )
-        
-        session.adapter = oauthHandler
-        
-        return session
-    }
-    
-    
-    
-    static func handlerResultObject<T: BaseMappable>(completion: (T?) -> (), error: (ResponseError?) -> (), response: DataResponse<Any>) {
-        if(response.response != nil && response.response!.statusCode == HTTPCodes.noContent) {
-            completion(nil)
-        } else if(response.result.isSuccess) {
-            if let responseError = validateResponse(statusCode: response.response!.statusCode, result: response.result.value) {
-                error(responseError)
-            } else {
-                completion(Mapper<T>().map(JSONObject: response.result.value))
-            }
-        } else {
-            error(validateResponse(statusCode: response.response?.statusCode ?? 400, result: nil))
+    func getMostRated(){
+    let url = baseURL+EnumURL.MelhoresNotas.path+api_key+endOfURL
+    Alamofire.request(url).responseArray(keyPath: "results") { (response: DataResponse<[Movie]>) in
+        switch response.result {
+        case .success( _):
+                if let movies = response.result.value{
+                    for Movie in movies{
+                        self.TopMovies.append(Movie)
+                    }
+                }
+            case .failure(let value):
+                print(value)
+                }
         }
     }
     
-    static func handlerResultArray<T: BaseMappable>(completion: ([T]?) -> (), error: (ResponseError?) -> (), response: DataResponse<Any>) {
-        if(response.response != nil && response.response!.statusCode == HTTPCodes.noContent) {
-            completion([T]())
-        } else if(response.result.isSuccess) {
-            if let responseError = validateResponse(statusCode: response.response!.statusCode, result: response.result.value) {
-                error(responseError)
-            } else {
-                completion(Mapper<T>().mapArray(JSONObject: response.result.value))
+    func getPopular(){
+        let url = baseURL+EnumURL.Populares.path+api_key+endOfURL
+        Alamofire.request(url).responseArray(keyPath: "results") { (response: DataResponse<[Movie]>) in
+            switch response.result {
+            case .success( _):
+            if let movies = response.result.value{
+                for Movie in movies{
+                    self.PopMovies.append(Movie)
+                }
             }
-        } else {
-            error(validateResponse(statusCode: response.response?.statusCode ?? 400, result: nil))
+            case .failure(let value):
+                print(value)
+            }
         }
     }
     
-    static func validateResponse(statusCode: Int, result: Any?) -> ResponseError? {
-        return (statusCode == HTTPCodes.OK || statusCode == HTTPCodes.created || statusCode == HTTPCodes.noContent) ? nil : (result == nil ? ResponseError(error: "ocorreu_erro") : Mapper<ResponseError>().map(JSONObject: result))
+    func getNowPlaying(){
+        let url = baseURL+EnumURL.EmCartaz.path+api_key+endOfURL
+        Alamofire.request(url).responseArray(keyPath: "results") { (response: DataResponse<[Movie]>) in
+            switch response.result {
+            case .success(_):
+            if let movies = response.result.value{
+                for Movie in movies{
+                    self.NowMovies.append(Movie)
+                }
+            }
+            case .failure(let value):
+                print(value)
+            }
+        }
     }
+    
+    func getSearch(filme:String){
+        let url = baseURL+EnumURL.Pesquisar.path+api_key+endOfURL
+        Alamofire.request(url).responseObject(completionHandler: { (response: DataResponse<Movie>) in
+            if let filme = response.result.value{
+                return self.TheMovie.append(filme)
+            }
+        });
+    }
+
+    func getVideo(filme:Int){
+        let url = baseURL+EnumURL.Video(filme).path+api_key+endOfURL
+        Alamofire.request(url).responseArray(keyPath: "results") { (response: DataResponse<[Video]>) in
+            if let movies = response.result.value{
+                for movie in movies{
+                    self.Videos.append(movie)
+                }
+            }
+        }
+    }
+    
 }

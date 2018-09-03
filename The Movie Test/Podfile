@@ -11,8 +11,7 @@ target 'The Movie Test' do
    pod 'Alamofire', '~> 4.7'
    pod 'ObjectMapper', '~> 3.3'
    pod 'SideMenu'
-
-
+   pod 'AlamofireObjectMapper', '~> 5.0'
 
   target 'The Movie TestTests' do
     inherit! :search_paths

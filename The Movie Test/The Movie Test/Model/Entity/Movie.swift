@@ -12,20 +12,24 @@ import ObjectMapper
 
 class Movie: Mappable{
     
+    var ID: Int?
     var Nome: String?
     var Descricao: String?
-    var DataLancamento: Date?
+    var DataLancamento: String?
     var MediaNota: Int?
     var Banner: String?
+    
+    init() {  }
     
     required init?(map: Map) {  }
     
     func mapping(map: Map) {
-        Nome <- map["name"]
+        ID <- map["id"]
+        Nome <- map["title"]
         Descricao <- map["overview"]
         DataLancamento <- map["release_date"]
         MediaNota <- map["vote_average"]
-        Banner <- map["backdrop_path"]
+        Banner <- map["poster_path"]
     }
     
     
