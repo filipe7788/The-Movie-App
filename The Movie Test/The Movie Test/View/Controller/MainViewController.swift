@@ -16,7 +16,6 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableview.dataSource = self
-        tableview.delegate = self
         
         baseRest.getPopular()
         Filmes = baseRest.PopMovies
@@ -45,10 +44,6 @@ class MainViewController: UIViewController {
             tableview.reloadData()
         }
     }
-}
-
-extension MainViewController: UITableViewDelegate{
-    
 }
 
 extension MainViewController: UITableViewDataSource{
