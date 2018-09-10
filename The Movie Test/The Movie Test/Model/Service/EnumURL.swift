@@ -23,7 +23,7 @@ enum EnumURL: Endpoint{
     
     public var path: String {
         switch self {
-        case .Pesquisar(let nome): return "search/movie?&query=\(nome)"
+        case .Pesquisar(let nome): return "search/movie?&query=\(nome)&"
         case .EmCartaz:  return "movie/now_playing?"
         case .Populares: return "movie/popular?"
         case .MelhoresNotas: return "movie/top_rated?"

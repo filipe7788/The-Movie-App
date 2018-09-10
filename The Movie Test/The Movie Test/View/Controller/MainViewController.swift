@@ -103,7 +103,8 @@ extension MainViewController: UITableViewDataSource{
 }
 
 extension MainViewController: UISearchBarDelegate{
-    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+ 
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         let url = Constants.baseURL+EnumURL.Pesquisar(searchBar.text!).path+Constants.api_key+Constants.endOfURL
         Alamofire.request(url).responseArray(keyPath: "results") { (response: DataResponse<[Movie]>) in
             switch response.result {
@@ -111,10 +112,13 @@ extension MainViewController: UISearchBarDelegate{
                 if let movies = response.result.value{
                     self.Filmes = movies
                     self.tableview.reloadData()
+                    self.view.endEditing(true)
                 }
             case .failure(let value):
                 print(value)
             }
         }
+        
     }
+    
 }

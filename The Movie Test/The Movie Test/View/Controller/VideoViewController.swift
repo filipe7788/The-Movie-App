@@ -32,9 +32,17 @@ class VideoViewController: UIViewController {
     func getVideo(){
         let url = Constants.baseURL+EnumURL.Video(idFilme).path+Constants.api_key+Constants.endOfURL
         Alamofire.request(url).responseArray(keyPath: "results") { (response: DataResponse<[Video]>) in
-            if let videos = response.result.value{
-                var urlVideo = URL(string: "http://youtube.com/embed/"+videos[0].key!)
-                self.webView.loadRequest(URLRequest(url: urlVideo!))
+
+            switch response.result {
+            case .success( _):
+                if let movies = response.result.value{
+                    if let videos = response.result.value{
+                        var urlVideo = URL(string: "http://youtube.com/embed/"+videos[0].key!)
+                        self.webView.loadRequest(URLRequest(url: urlVideo!))
+                    }
+                }
+            case .failure(let value):
+                self.dismiss(animated: true, completion: nil)
             }
         }
     }
