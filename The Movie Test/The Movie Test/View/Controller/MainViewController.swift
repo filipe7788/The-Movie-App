@@ -12,18 +12,16 @@ import AlamofireObjectMapper
 
 class MainViewController: UIViewController {
     
-    let baseURL = "https://api.themoviedb.org/3/"
-    let api_key = "api_key=2bae12ea6f75b14280cce8dc6ea5f242"
-    let endOfURL = "&language=pt-BR"
+    
+    @IBOutlet weak var searchBar: UISearchBar!
     
     var Filmes:[Movie] = []
     @IBOutlet weak var tableview: UITableView!
-    var baseRest = BaseRest()
     override func viewDidLoad() {
         super.viewDidLoad()
         tableview.dataSource = self
         tableview.delegate = self
-        baseRest.getPopular()
+        searchBar.delegate = self
         getFilmes(url: EnumURL.Populares)
     }
 
@@ -45,7 +43,7 @@ class MainViewController: UIViewController {
     }
     
     func getFilmes(url:EnumURL){
-        let url = baseURL+url.path+api_key+endOfURL
+        let url = Constants.baseURL+url.path+Constants.api_key+Constants.endOfURL
         Alamofire.request(url).responseArray(keyPath: "results") { (response: DataResponse<[Movie]>) in
             switch response.result {
             case .success( _):
@@ -61,7 +59,7 @@ class MainViewController: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let cell = segue.destination as? DetalheController{
-//            cell.Filme = baseR
+            cell.idFilme = sender as! Int
         }
     }
     
@@ -69,8 +67,7 @@ class MainViewController: UIViewController {
 
 extension MainViewController: UITableViewDelegate{
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        baseRest.getMovie(filme: indexPath.row)
-        performSegue(withIdentifier: "detalheSegue", sender: indexPath)
+        performSegue(withIdentifier: "detalheSegue", sender: Filmes[indexPath.row].ID)
     }
 }
 
@@ -103,6 +100,21 @@ extension MainViewController: UITableViewDataSource{
         
         return cell
     }
-    
-    
+}
+
+extension MainViewController: UISearchBarDelegate{
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        let url = Constants.baseURL+EnumURL.Pesquisar(searchBar.text!).path+Constants.api_key+Constants.endOfURL
+        Alamofire.request(url).responseArray(keyPath: "results") { (response: DataResponse<[Movie]>) in
+            switch response.result {
+            case .success( _):
+                if let movies = response.result.value{
+                    self.Filmes = movies
+                    self.tableview.reloadData()
+                }
+            case .failure(let value):
+                print(value)
+            }
+        }
+    }
 }

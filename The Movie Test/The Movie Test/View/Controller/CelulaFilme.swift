@@ -15,6 +15,7 @@ class CelulaFilme: UITableViewCell {
     @IBOutlet weak var nota: UILabel!
     @IBOutlet weak var dataLancamento: UILabel!
     @IBOutlet weak var fotoFilme: UIImageView!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

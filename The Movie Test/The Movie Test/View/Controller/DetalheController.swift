@@ -12,22 +12,27 @@ import AlamofireObjectMapper
 
 class DetalheController: UIViewController {
 
-    var idFilme: Int = 0
+    var idFilme: Int = Int()
     
     @IBOutlet weak var bannerFilme: UIImageView!
     
+    @IBOutlet weak var labelTrailer: UILabel!
     @IBOutlet weak var Titulo: UIView!
     @IBOutlet weak var Descricao: UILabel!
     @IBOutlet weak var DataLancamento: UILabel!
     @IBOutlet weak var Media: UILabel!
     @IBOutlet weak var Status: UILabel!
+    @IBOutlet weak var btnVeja: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         getFilme()
     }
 
-    @IBAction func verTrailer(_ sender: UIButton) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let view = segue.destination as? VideoViewController{
+            view.idFilme = self.idFilme
+        }
     }
     
     func getFilme(){
@@ -44,9 +49,10 @@ class DetalheController: UIViewController {
         }
     }
     
-    func refreshData(Filme:ResMovie){
-        let foto =  Data(base64Encoded: Filme.Banner ?? "", options: NSData.Base64DecodingOptions())
-        bannerFilme?.image = UIImage(data: foto as! Data)
+    func refreshData(Filme: ResMovie){
+        let url = URL(string: "https://image.tmdb.org/t/p/w500/"+(Filme.Banner ?? ""))
+        let data = try? Data(contentsOf: url!)
+        bannerFilme?.image = UIImage(data: data as! Data)
         Descricao.text = Filme.Descricao
         DataLancamento.text = Filme.DataLancamento
         Media.text = Filme.MediaNota?.description

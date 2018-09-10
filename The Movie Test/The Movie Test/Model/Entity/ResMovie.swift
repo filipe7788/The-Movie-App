@@ -19,6 +19,7 @@ class ResMovie: Mappable{
     var MediaNota: Int?
     var Banner: String?
     var Status: String?
+    var Video: Bool?
     
     init() {  }
     
@@ -32,7 +33,6 @@ class ResMovie: Mappable{
         MediaNota <- map["vote_average"]
         Banner <- map["backdrop_path"]
         Status <- map["status"]
+        Video <- map["video"]
     }
-    
-    
 }

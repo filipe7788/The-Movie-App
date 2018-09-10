@@ -14,7 +14,7 @@ protocol Endpoint {
 
 enum EnumURL: Endpoint{
     
-    case Pesquisar
+    case Pesquisar(String)
     case EmCartaz
     case Populares
     case MelhoresNotas
@@ -23,12 +23,12 @@ enum EnumURL: Endpoint{
     
     public var path: String {
         switch self {
-        case .Pesquisar: return "search/movie?"
+        case .Pesquisar(let nome): return "search/movie?&query=\(nome)"
         case .EmCartaz:  return "movie/now_playing?"
         case .Populares: return "movie/popular?"
         case .MelhoresNotas: return "movie/top_rated?"
         case .Video(let video): return "movie/\(video)/videos?"
-        case .Filme(let filme): return "movie/\(filme)"
+        case .Filme(let filme): return "movie/\(filme)?"
         }
     }
 }
