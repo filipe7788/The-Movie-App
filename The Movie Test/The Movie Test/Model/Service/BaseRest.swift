@@ -18,27 +18,15 @@ class BaseRest {
     let api_key = "api_key=2bae12ea6f75b14280cce8dc6ea5f242"
     let endOfURL = "&language=pt-BR"
     
+
     var TopMovies:[Movie] = []
     var PopMovies:[Movie] = []
     var NowMovies:[Movie] = []
     var TheMovie:[Movie] = []
     var Videos:[Video] = []
+    var Filme: ResMovie = ResMovie()
     
-    func getMostRated(){
-    let url = baseURL+EnumURL.MelhoresNotas.path+api_key+endOfURL
-    Alamofire.request(url).responseArray(keyPath: "results") { (response: DataResponse<[Movie]>) in
-        switch response.result {
-        case .success( _):
-                if let movies = response.result.value{
-                    for Movie in movies{
-                        self.TopMovies.append(Movie)
-                    }
-                }
-            case .failure(let value):
-                print(value)
-                }
-        }
-    }
+  
     
     func getPopular(){
         let url = baseURL+EnumURL.Populares.path+api_key+endOfURL
@@ -90,6 +78,14 @@ class BaseRest {
                 }
             }
         }
+    }
+    
+    func getMovie(filme:Int){
+        let url = baseURL+EnumURL.Filme(filme).path+api_key+endOfURL
+        Alamofire.request(url).responseObject(completionHandler: {
+            (response: DataResponse<ResMovie>) in
+            self.Filme = response.result.value ?? ResMovie()
+        })
     }
     
 }

@@ -19,6 +19,7 @@ enum EnumURL: Endpoint{
     case Populares
     case MelhoresNotas
     case Video(Int)
+    case Filme(Int)
     
     public var path: String {
         switch self {
@@ -27,6 +28,7 @@ enum EnumURL: Endpoint{
         case .Populares: return "movie/popular?"
         case .MelhoresNotas: return "movie/top_rated?"
         case .Video(let video): return "movie/\(video)/videos?"
+        case .Filme(let filme): return "movie/\(filme)"
         }
     }
 }

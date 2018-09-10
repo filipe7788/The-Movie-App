@@ -7,19 +7,24 @@
 //
 
 import UIKit
+import Alamofire
+import AlamofireObjectMapper
 
 class MainViewController: UIViewController {
-
+    
+    let baseURL = "https://api.themoviedb.org/3/"
+    let api_key = "api_key=2bae12ea6f75b14280cce8dc6ea5f242"
+    let endOfURL = "&language=pt-BR"
+    
     var Filmes:[Movie] = []
     @IBOutlet weak var tableview: UITableView!
     var baseRest = BaseRest()
     override func viewDidLoad() {
         super.viewDidLoad()
         tableview.dataSource = self
-        
+        tableview.delegate = self
         baseRest.getPopular()
-        Filmes = baseRest.PopMovies
-        tableview.reloadData()
+        getFilmes(url: EnumURL.Populares)
     }
 
     override func didReceiveMemoryWarning() {
@@ -29,20 +34,43 @@ class MainViewController: UIViewController {
     
     @IBAction func sceneChange(_ sender: UISegmentedControl) {
         if sender.selectedSegmentIndex == 0{
-            baseRest.getPopular()
-            Filmes = baseRest.PopMovies
-            tableview.reloadData()
+            getFilmes(url: EnumURL.Populares)
         }
         else if sender.selectedSegmentIndex == 1{
-            baseRest.getMostRated()
-            Filmes = baseRest.TopMovies
-            tableview.reloadData()
+            getFilmes(url: EnumURL.MelhoresNotas)
         }
         else if sender.selectedSegmentIndex == 2{
-            baseRest.getNowPlaying()
-            Filmes = baseRest.NowMovies
-            tableview.reloadData()
+            getFilmes(url: EnumURL.EmCartaz)
         }
+    }
+    
+    func getFilmes(url:EnumURL){
+        let url = baseURL+url.path+api_key+endOfURL
+        Alamofire.request(url).responseArray(keyPath: "results") { (response: DataResponse<[Movie]>) in
+            switch response.result {
+            case .success( _):
+                if let movies = response.result.value{
+                    self.Filmes = movies
+                    self.tableview.reloadData()
+                }
+            case .failure(let value):
+                print(value)
+            }
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let cell = segue.destination as? DetalheController{
+//            cell.Filme = baseR
+        }
+    }
+    
+}
+
+extension MainViewController: UITableViewDelegate{
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        baseRest.getMovie(filme: indexPath.row)
+        performSegue(withIdentifier: "detalheSegue", sender: indexPath)
     }
 }
 

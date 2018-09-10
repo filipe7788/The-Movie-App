@@ -14,6 +14,7 @@ class Video: Mappable{
     var name:   String?
     var site:   String?
 
+    init() { }
     
     required init?(map: Map) {
         
