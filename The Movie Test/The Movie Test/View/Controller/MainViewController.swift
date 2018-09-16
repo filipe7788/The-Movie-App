@@ -7,56 +7,43 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 import Alamofire
 import AlamofireObjectMapper
 
 class MainViewController: UIViewController {
     
-    
+    var disposeBag = DisposeBag()
+    var popModel = FilmesViewModel()
     @IBOutlet weak var searchBar: UISearchBar!
     
-    var Filmes:[Movie] = []
     @IBOutlet weak var tableview: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableview.dataSource = self
-        tableview.delegate = self
-        searchBar.delegate = self
-        getFilmes(url: EnumURL.Populares)
+        doBindings()
+        self.popModel.getFilmes(url: EnumURL.Populares)
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
     @IBAction func sceneChange(_ sender: UISegmentedControl) {
-        if sender.selectedSegmentIndex == 0{
-            getFilmes(url: EnumURL.Populares)
-        }
-        else if sender.selectedSegmentIndex == 1{
-            getFilmes(url: EnumURL.MelhoresNotas)
-        }
-        else if sender.selectedSegmentIndex == 2{
-            getFilmes(url: EnumURL.EmCartaz)
-        }
-    }
-    
-    func getFilmes(url:EnumURL){
-        let url = Constants.baseURL+url.path+Constants.api_key+Constants.endOfURL
-        Alamofire.request(url).responseArray(keyPath: "results") { (response: DataResponse<[Movie]>) in
-            switch response.result {
-            case .success( _):
-                if let movies = response.result.value{
-                    self.Filmes = movies
-                    self.tableview.reloadData()
-                }
-            case .failure(let value):
-                print(value)
-            }
+        if sender.selectedSegmentIndex == 0 {
+            self.popModel.filmes = BehaviorRelay<[Movie]>(value: [])
+            self.popModel.getFilmes(url: EnumURL.Populares)
+        } else if sender.selectedSegmentIndex == 1 {
+            self.popModel.filmes = BehaviorRelay<[Movie]>(value: [])
+            self.popModel.getFilmes(url: EnumURL.MelhoresNotas)
+        } else if sender.selectedSegmentIndex == 2 {
+            self.popModel.filmes = BehaviorRelay<[Movie]>(value: [])
+            self.popModel.getFilmes(url: EnumURL.EmCartaz)
         }
     }
-    
+
+    func doBindings(){
+        popModel.filmes.asObservable().bind(onNext:{ _ in
+          self.tableview.reloadData()
+        }).disposed(by: disposeBag)
+    }
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let cell = segue.destination as? DetalheController{
             cell.idFilme = sender as! Int
@@ -67,19 +54,19 @@ class MainViewController: UIViewController {
 
 extension MainViewController: UITableViewDelegate{
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        performSegue(withIdentifier: "detalheSegue", sender: Filmes[indexPath.row].ID)
+        performSegue(withIdentifier: "detalheSegue", sender: self.popModel.filmes.value[indexPath.row].ID)
     }
 }
 
 extension MainViewController: UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-       return self.Filmes.count
+       return self.popModel.filmes.value.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableview.dequeueReusableCell(withIdentifier: "celulaFIlme", for: indexPath) as! CelulaFilme
         
-        let filme = Filmes[indexPath.row]
+        let filme = self.popModel.filmes.value[indexPath.row]
         
         cell.nome.text = filme.Nome
         
@@ -105,20 +92,8 @@ extension MainViewController: UITableViewDataSource{
 extension MainViewController: UISearchBarDelegate{
  
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        let url = Constants.baseURL+EnumURL.Pesquisar(searchBar.text!).path+Constants.api_key+Constants.endOfURL
-        Alamofire.request(url).responseArray(keyPath: "results") { (response: DataResponse<[Movie]>) in
-            switch response.result {
-            case .success( _):
-                if let movies = response.result.value{
-                    self.Filmes = movies
-                    self.tableview.reloadData()
-                    self.view.endEditing(true)
-                }
-            case .failure(let value):
-                print(value)
-            }
-        }
-        
+        self.popModel.filmes = BehaviorRelay<[Movie]>(value: [])
+        self.popModel.getFilmes(url: EnumURL.Pesquisar(searchBar.text ?? ""))
+        self.view.endEditing(true)
     }
-    
 }

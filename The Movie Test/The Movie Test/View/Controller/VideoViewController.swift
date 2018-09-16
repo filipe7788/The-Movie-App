@@ -12,22 +12,12 @@ import Alamofire
 
 class VideoViewController: UIViewController {
 
-    
     var idFilme = Int()
     @IBOutlet weak var webView: UIWebView!
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         getVideo()
-        // Do any additional setup after loading the view.
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-   
     
     func getVideo(){
         let url = Constants.baseURL+EnumURL.Video(idFilme).path+Constants.api_key+Constants.endOfURL
@@ -35,13 +25,16 @@ class VideoViewController: UIViewController {
 
             switch response.result {
             case .success( _):
-                if let movies = response.result.value{
-                    if let videos = response.result.value{
-                        var urlVideo = URL(string: "http://youtube.com/embed/"+videos[0].key!)
+                if let videos = response.result.value{
+                    if let chaveFilme = videos[0].key{
+                        let urlVideo = URL(string: "http://youtube.com/embed/"+chaveFilme)
+                        print(urlVideo?.description)
                         self.webView.loadRequest(URLRequest(url: urlVideo!))
+                    }else{
+                        self.dismiss(animated: true, completion: nil)
                     }
                 }
-            case .failure(let value):
+            case .failure(let _):
                 self.dismiss(animated: true, completion: nil)
             }
         }

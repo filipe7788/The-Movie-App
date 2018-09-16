@@ -10,12 +10,15 @@ target 'The Movie Test' do
 
    pod 'Alamofire', '~> 4.7'
    pod 'ObjectMapper', '~> 3.3'
-   pod 'SideMenu'
+   pod 'RxSwift',    '~> 4.0'
+   pod 'RxCocoa',    '~> 4.0'
    pod 'AlamofireObjectMapper', '~> 5.0'
 
   target 'The Movie TestTests' do
     inherit! :search_paths
     # Pods for testing
+   pod 'RxBlocking', '~> 4.0'
+   pod 'RxTest',     '~> 4.0'
   end
 
   target 'The Movie TestUITests' do

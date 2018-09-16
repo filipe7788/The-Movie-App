@@ -14,6 +14,7 @@ class DetalheController: UIViewController {
 
     var idFilme: Int = Int()
     
+    @IBOutlet weak var TituloFilme: UILabel!
     @IBOutlet weak var bannerFilme: UIImageView!
     
     @IBOutlet weak var labelTrailer: UILabel!
@@ -50,6 +51,7 @@ class DetalheController: UIViewController {
     }
     
     func refreshData(Filme: ResMovie){
+        self.TituloFilme.text = Filme.Nome
         let url = URL(string: "https://image.tmdb.org/t/p/w500/"+(Filme.Banner ?? ""))
         let data = try? Data(contentsOf: url!)
         bannerFilme?.image = UIImage(data: data as! Data)

@@ -122,6 +122,10 @@
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="y1j-Jr-wy2" id="1MQ-Cp-dlD"/>
+                                    <outlet property="delegate" destination="y1j-Jr-wy2" id="OdE-YL-sPw"/>
+                                </connections>
                             </tableView>
                             <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="gx1-Re-u1M">
                                 <rect key="frame" x="0.0" y="64" width="375" height="56"/>
@@ -154,10 +158,10 @@
             </objects>
             <point key="canvasLocation" x="149.59999999999999" y="201.94902548725639"/>
         </scene>
-        <!--Detalhe Controller-->
+        <!--Detalhes-->
         <scene sceneID="ox4-5Y-ySL">
             <objects>
-                <viewController id="pqY-L4-K3D" customClass="DetalheController" customModule="The_Movie_Test" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Detalhes" id="pqY-L4-K3D" customClass="DetalheController" customModule="The_Movie_Test" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Nxr-NG-ao8">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="750"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -227,7 +231,6 @@
                                                 <rect key="frame" x="124.5" y="529.5" width="30" height="30"/>
                                                 <state key="normal" title="veja"/>
                                                 <connections>
-                                                    <action selector="verTrailer:" destination="pqY-L4-K3D" eventType="touchUpInside" id="fLE-jQ-KUx"/>
                                                     <segue destination="Dx7-8R-Lbp" kind="show" id="BCv-1k-HDv"/>
                                                 </connections>
                                             </button>
@@ -306,6 +309,7 @@
                         <outlet property="Media" destination="Pxs-6L-4hV" id="Wxz-EM-A65"/>
                         <outlet property="Status" destination="YEC-VH-AK0" id="eVj-Ur-ees"/>
                         <outlet property="Titulo" destination="LDy-Fz-PfP" id="nwU-hq-xOf"/>
+                        <outlet property="TituloFilme" destination="YCF-Zd-kYg" id="RvN-wN-Heu"/>
                         <outlet property="bannerFilme" destination="QAJ-TX-GrA" id="EkP-de-K0O"/>
                         <outlet property="btnVeja" destination="Qpl-PD-1PR" id="b1k-OS-RSV"/>
                         <outlet property="labelTrailer" destination="ILY-ns-G9Y" id="DGq-HP-3LU"/>
@@ -315,11 +319,10 @@
             </objects>
             <point key="canvasLocation" x="1112.8" y="201.49925037481262"/>
         </scene>
-        <!--Video View Controller-->
+        <!--Trailer-->
         <scene sceneID="cFA-P4-Nfc">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="nUe-Fo-uWu" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <viewController id="Dx7-8R-Lbp" customClass="VideoViewController" customModule="The_Movie_Test" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Trailer" id="Dx7-8R-Lbp" customClass="VideoViewController" customModule="The_Movie_Test" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="LtN-H9-rfi">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -342,6 +345,7 @@
                         <outlet property="webView" destination="vYC-Oq-rEn" id="g4C-gi-lG9"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="nUe-Fo-uWu" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1928.8" y="201.94902548725639"/>
         </scene>
