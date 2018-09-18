@@ -26,5 +26,17 @@ struct FilmesViewModel {
             self.loading.accept(false)
             self.error.accept("Erro na requisição")
         })
-    }    
+    }
+    
+    func getFoto(url: String)-> UIImage {
+        let url = URL(string: "https://image.tmdb.org/t/p/w500/"+url)
+        let data = try? Data(contentsOf: url!)
+        return UIImage(data: data ?? Data()) ?? UIImage()
+    }
+    
+    func getVideo(idFilme: Int, completion: @escaping (URL?) -> ()){
+        loading.accept(true)
+        REST.getVideo(idFilme: idFilme, completionHandler:{ url in completion(url)}, errorHandler: { })
+        loading.accept(false)
+    }
 }

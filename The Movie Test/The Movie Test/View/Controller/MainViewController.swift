@@ -70,20 +70,10 @@ extension MainViewController: UITableViewDataSource{
         
         cell.nome.text = filme.Nome
         
-        var desc = filme.Descricao
-        if var descricao = filme.Descricao{
-            if(descricao.characters.count > 200){
-                desc = String(descricao[descricao.startIndex..<descricao.index(descricao.startIndex, offsetBy: 200)])
-            }
-        }
-        
-        cell.descricao.text = desc ?? ""
+        cell.descricao.text = filme.Descricao
         cell.dataLancamento.text = filme.DataLancamento
         cell.nota.text = filme.MediaNota?.description
-        
-        let url = URL(string: "https://image.tmdb.org/t/p/w500/"+(filme.Banner ?? ""))
-        let data = try? Data(contentsOf: url!)
-        cell.fotoFilme.image = UIImage(data: data!)
+        cell.fotoFilme.image = popModel.getFoto(url: filme.Banner ?? "")
         
         return cell
     }
