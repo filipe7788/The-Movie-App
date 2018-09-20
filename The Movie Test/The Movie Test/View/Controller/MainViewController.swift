@@ -14,6 +14,7 @@ import AlamofireObjectMapper
 
 class MainViewController: UIViewController {
     
+    var activityIndicator = UIActivityIndicatorView()
     var disposeBag = DisposeBag()
     var popModel = FilmesViewModel()
     @IBOutlet weak var searchBar: UISearchBar!
@@ -40,7 +41,21 @@ class MainViewController: UIViewController {
 
     func doBindings(){
         popModel.filmes.asObservable().bind(onNext:{ _ in
-          self.tableview.reloadData()
+            self.tableview.reloadData()
+        }).disposed(by: disposeBag)
+        
+        popModel.loading.asObservable().bind(onNext:{ loading in
+            if loading {
+                self.tableview.reloadData()
+                self.activityIndicator.center = self.view.center
+                self.activityIndicator.hidesWhenStopped = true
+                self.activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
+                self.view.addSubview(self.activityIndicator)
+                self.activityIndicator.startAnimating()
+            }else {
+                self.tableview.reloadData()
+                self.activityIndicator.stopAnimating()
+            }
         }).disposed(by: disposeBag)
     }
 
@@ -84,6 +99,6 @@ extension MainViewController: UISearchBarDelegate{
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         self.view.endEditing(true)
         self.popModel.filmes = BehaviorRelay<[Movie]>(value: [])
-        self.popModel.getSearch(url: EnumURL.Pesquisar(searchBar.text ?? ""))
+        self.popModel.getSearch(url: EnumURL.Pesquisar(searchBar.text?.replacingOccurrences(of: " ", with: "+", options: .literal, range: nil) ?? ""))
     }
 }

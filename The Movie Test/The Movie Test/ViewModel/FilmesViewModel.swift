@@ -29,6 +29,7 @@ struct FilmesViewModel {
     }
     
     func getSearch(url: EnumURL){
+        self.loading.accept(true)
         REST.getSearch(urlEnum: url, completionHandler: { RequestMovies in
                 self.filmes.accept(RequestMovies ?? [Movie]())
                 self.loading.accept(false)
