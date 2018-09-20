@@ -13,6 +13,7 @@ import AlamofireObjectMapper
 class DetalheController: UIViewController {
 
     var idFilme: Int = Int()
+    var model = FilmesViewModel()
     
     @IBOutlet weak var TituloFilme: UILabel!
     @IBOutlet weak var bannerFilme: UIImageView!
@@ -37,27 +38,13 @@ class DetalheController: UIViewController {
     }
     
     func getFilme(){
-        let url = Constants.baseURL+EnumURL.Filme(self.idFilme).path+Constants.api_key+Constants.endOfURL
-        Alamofire.request(url).responseObject{ (response: DataResponse<ResMovie>) in
-            switch response.result {
-            case .success( _):
-                if let movie = response.result.value{
-                    self.refreshData(Filme: movie)
-                }
-            case .failure(let value):
-                print(value)
-            }
-        }
-    }
-    
-    func refreshData(Filme: ResMovie){
-        self.TituloFilme.text = Filme.Nome
-        let url = URL(string: "https://image.tmdb.org/t/p/w500/"+(Filme.Banner ?? ""))
-        let data = try? Data(contentsOf: url!)
-        bannerFilme?.image = UIImage(data: data as! Data)
-        Descricao.text = Filme.Descricao
-        DataLancamento.text = Filme.DataLancamento
-        Media.text = Filme.MediaNota?.description
-        Status.text = Filme.Status
+        model.getFilme(idFilme: idFilme, completion: { Filme in
+            self.TituloFilme.text = Filme?.Nome
+            self.bannerFilme?.image = self.model.getFoto(url: Filme?.Banner ?? "")
+            self.Descricao.text = Filme?.Descricao
+            self.DataLancamento.text = Filme?.DataLancamento
+            self.Media.text = Filme?.MediaNota?.description
+            self.Status.text = Filme?.Status
+        })
     }
 }

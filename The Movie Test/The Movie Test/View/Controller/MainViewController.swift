@@ -65,7 +65,7 @@ extension MainViewController: UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableview.dequeueReusableCell(withIdentifier: "celulaFIlme", for: indexPath) as! CelulaFilme
-        
+
         let filme = self.popModel.filmes.value[indexPath.row]
         
         cell.nome.text = filme.Nome
@@ -82,8 +82,8 @@ extension MainViewController: UITableViewDataSource{
 extension MainViewController: UISearchBarDelegate{
  
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        self.popModel.filmes = BehaviorRelay<[Movie]>(value: [])
-        self.popModel.getFilmes(url: EnumURL.Pesquisar(searchBar.text ?? ""))
         self.view.endEditing(true)
+        self.popModel.filmes = BehaviorRelay<[Movie]>(value: [])
+        self.popModel.getSearch(url: EnumURL.Pesquisar(searchBar.text ?? ""))
     }
 }

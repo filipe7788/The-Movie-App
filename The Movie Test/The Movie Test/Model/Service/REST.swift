@@ -50,4 +50,17 @@ class REST {
             }
         }
     }
+    
+    static func getFilme(idFilme: Int, completionHandler: @escaping (ResMovie?) -> (), errorHandler: @escaping () -> ()){
+        Alamofire.request(Constants.baseURL+EnumURL.Filme(idFilme).path+Constants.api_key+Constants.endOfURL).responseObject{ (response: DataResponse<ResMovie>) in
+            switch response.result {
+            case .success( _):
+                if let movie = response.result.value{
+                    completionHandler(movie)
+                }
+            case .failure(_):
+                    errorHandler()
+            }
+        }
+    }
 }
