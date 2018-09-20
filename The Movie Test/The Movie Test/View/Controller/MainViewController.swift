@@ -95,10 +95,11 @@ extension MainViewController: UITableViewDataSource{
 }
 
 extension MainViewController: UISearchBarDelegate{
- 
+    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         self.view.endEditing(true)
         self.popModel.filmes = BehaviorRelay<[Movie]>(value: [])
         self.popModel.getSearch(url: EnumURL.Pesquisar(searchBar.text?.replacingOccurrences(of: " ", with: "+", options: .literal, range: nil) ?? ""))
+        searchBar.text = ""
     }
 }
