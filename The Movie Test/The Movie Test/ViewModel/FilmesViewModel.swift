@@ -28,18 +28,6 @@ struct FilmesViewModel {
         })
     }
     
-    func getSearch(url: EnumURL){
-        self.loading.accept(true)
-        REST.getSearch(urlEnum: url, completionHandler: { RequestMovies in
-                self.filmes.accept(RequestMovies ?? [Movie]())
-                self.loading.accept(false)
-                self.sucesso.accept("Filme Adcionado a lista")
-        }, errorHandler: {
-                self.loading.accept(false)
-                self.error.accept("Erro na requisição")
-        })
-    }
-    
     func getFilme(idFilme: Int, completion: @escaping (ResMovie?) -> ()){
         loading.accept(true)
         REST.getFilme(idFilme: idFilme, completionHandler: {filme in completion(filme)}, errorHandler: {})
@@ -51,10 +39,5 @@ struct FilmesViewModel {
         let data = try? Data(contentsOf: url!)
         return UIImage(data: data ?? Data()) ?? UIImage()
     }
-    
-    func getVideo(idFilme: Int, completion: @escaping (URL?) -> ()){
-        loading.accept(true)
-        REST.getVideo(idFilme: idFilme, completionHandler:{ url in completion(url)}, errorHandler: { })
-        loading.accept(false)
-    }
+ 
 }

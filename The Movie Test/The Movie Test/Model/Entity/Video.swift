@@ -16,9 +16,7 @@ class Video: Mappable{
 
     init() { }
     
-    required init?(map: Map) {
-        
-    }
+    required init?(map: Map) { }
     
     func mapping(map: Map) {
         key <- map["key"]

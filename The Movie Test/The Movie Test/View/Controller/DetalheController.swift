@@ -7,14 +7,18 @@
 //
 
 import UIKit
-import Alamofire
-import AlamofireObjectMapper
+import RxSwift
 
 class DetalheController: UIViewController {
 
     var idFilme: Int = Int()
     var model = FilmesViewModel()
+    var videosModel = VideoViewModel()
+    var disposeBag = DisposeBag()
     
+    var activityIndicator = UIActivityIndicatorView()
+
+    @IBOutlet weak var tableview: UITableView!
     @IBOutlet weak var TituloFilme: UILabel!
     @IBOutlet weak var bannerFilme: UIImageView!
     
@@ -24,17 +28,13 @@ class DetalheController: UIViewController {
     @IBOutlet weak var DataLancamento: UILabel!
     @IBOutlet weak var Media: UILabel!
     @IBOutlet weak var Status: UILabel!
-    @IBOutlet weak var btnVeja: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         getFilme()
-    }
-
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let view = segue.destination as? VideoViewController{
-            view.idFilme = self.idFilme
-        }
+        doBindings()
+        videosModel.getVideos(idFilme: self.idFilme)
+        tableview.rowHeight = 125
     }
     
     func getFilme(){
@@ -46,5 +46,44 @@ class DetalheController: UIViewController {
             self.Media.text = Filme?.MediaNota?.description
             self.Status.text = Filme?.Status
         })
+    }
+    
+    func doBindings(){
+        videosModel.videos.asObservable().bind(onNext:{ _ in
+            self.tableview.reloadData()
+        }).disposed(by: disposeBag)
+        
+        videosModel.loading.asObservable().bind(onNext:{ loading in
+            if loading {
+                self.tableview.reloadData()
+                // Activity Indicator
+                self.activityIndicator.center = self.view.center
+                self.activityIndicator.hidesWhenStopped = true
+                self.activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
+                self.view.addSubview(self.activityIndicator)
+                self.activityIndicator.startAnimating()
+                // Start Animation
+            }else {
+                // Stop Animation
+                self.tableview.reloadData()
+                self.activityIndicator.stopAnimating()
+            }
+        }).disposed(by: disposeBag)
+    }
+}
+
+
+
+extension DetalheController: UITableViewDataSource{
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return videosModel.videos.value.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cellTrailer") as? TrailerTableViewCell
+        let video = self.videosModel.videos.value[indexPath.row]
+        let url = URL(string: "http://youtube.com/embed/"+(video.key ?? ""))
+        cell?.webView.loadRequest(URLRequest(url: url!))
+        return cell ?? TrailerTableViewCell()
     }
 }

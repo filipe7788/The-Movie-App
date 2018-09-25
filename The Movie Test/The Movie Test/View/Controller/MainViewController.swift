@@ -18,8 +18,8 @@ class MainViewController: UIViewController {
     var disposeBag = DisposeBag()
     var popModel = FilmesViewModel()
     @IBOutlet weak var searchBar: UISearchBar!
-    
     @IBOutlet weak var tableview: UITableView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         doBindings()
@@ -47,12 +47,15 @@ class MainViewController: UIViewController {
         popModel.loading.asObservable().bind(onNext:{ loading in
             if loading {
                 self.tableview.reloadData()
+                // Activity Indicator
                 self.activityIndicator.center = self.view.center
                 self.activityIndicator.hidesWhenStopped = true
                 self.activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
                 self.view.addSubview(self.activityIndicator)
                 self.activityIndicator.startAnimating()
+                // Start Animation
             }else {
+                // Stop Animation
                 self.tableview.reloadData()
                 self.activityIndicator.stopAnimating()
             }
@@ -79,18 +82,16 @@ extension MainViewController: UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableview.dequeueReusableCell(withIdentifier: "celulaFIlme", for: indexPath) as! CelulaFilme
+        let cell = tableview.dequeueReusableCell(withIdentifier: "celulaFIlme", for: indexPath) as? CelulaFilme
 
         let filme = self.popModel.filmes.value[indexPath.row]
+        cell?.nome.text = filme.Nome
+        cell?.descricao.text = filme.Descricao
+        cell?.dataLancamento.text = filme.DataLancamento
+        cell?.nota.text = filme.MediaNota?.description
+        cell?.fotoFilme.image = popModel.getFoto(url: filme.Banner ?? "")
         
-        cell.nome.text = filme.Nome
-        
-        cell.descricao.text = filme.Descricao
-        cell.dataLancamento.text = filme.DataLancamento
-        cell.nota.text = filme.MediaNota?.description
-        cell.fotoFilme.image = popModel.getFoto(url: filme.Banner ?? "")
-        
-        return cell
+        return cell ?? CelulaFilme()
     }
 }
 
@@ -99,7 +100,7 @@ extension MainViewController: UISearchBarDelegate{
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         self.view.endEditing(true)
         self.popModel.filmes = BehaviorRelay<[Movie]>(value: [])
-        self.popModel.getSearch(url: EnumURL.Pesquisar(searchBar.text?.replacingOccurrences(of: " ", with: "+", options: .literal, range: nil) ?? ""))
+        self.popModel.getFilmes(url: EnumURL.Pesquisar(searchBar.text?.replacingOccurrences(of: " ", with: "+", options: .literal, range: nil) ?? ""))
         searchBar.text = ""
     }
 }
