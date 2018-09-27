@@ -34,7 +34,7 @@ class DetalheController: UIViewController {
         getFilme()
         doBindings()
         videosModel.getVideos(idFilme: self.idFilme)
-        tableview.rowHeight = 125
+        tableview.rowHeight = 228
     }
     
     func getFilme(){
