@@ -15,3 +15,4 @@ Aplicativo em swift para consumir API do IMDB mostrando os principais filmes em 
 * RxSwift
 * RxCocoa
 * MVVM: Model - View - ViewModel
+* CocoaPods
