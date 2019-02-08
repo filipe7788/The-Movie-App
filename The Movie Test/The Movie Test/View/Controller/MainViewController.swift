@@ -23,6 +23,7 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         doBindings()
+        self.tableview.register(UINib(nibName: "movieCell", bundle: nil), forCellReuseIdentifier: "celulaFilme")
         self.popModel.getFilmes(url: EnumURL.Populares)
     }
 
@@ -82,7 +83,7 @@ extension MainViewController: UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableview.dequeueReusableCell(withIdentifier: "celulaFIlme", for: indexPath) as? CelulaFilme
+        let cell = tableview.dequeueReusableCell(withIdentifier: "celulaFilme", for: indexPath) as? CelulaFilme
 
         let filme = self.popModel.filmes.value[indexPath.row]
         cell?.nome.text = filme.Nome

@@ -30,7 +30,8 @@ struct FilmesViewModel {
     
     func getFilme(idFilme: Int, completion: @escaping (ResMovie?) -> ()){
         loading.accept(true)
-        REST.getFilme(idFilme: idFilme, completionHandler: {filme in completion(filme)}, errorHandler: {})
+        REST.getFilme(idFilme: idFilme, completionHandler: {filme in
+            completion(filme)}, errorHandler: {})
         loading.accept(false)
     }
     
