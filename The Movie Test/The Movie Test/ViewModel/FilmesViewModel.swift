@@ -31,8 +31,13 @@ struct FilmesViewModel {
     func getFilme(idFilme: Int, completion: @escaping (ResMovie?) -> ()){
         loading.accept(true)
         REST.getFilme(idFilme: idFilme, completionHandler: {filme in
-            completion(filme)}, errorHandler: {})
-        loading.accept(false)
+            completion(filme)
+            self.loading.accept(false)
+            self.sucesso.accept("Filme Adcionado a lista")
+        }, errorHandler: {
+                self.loading.accept(false)
+                self.error.accept("Erro na requisição")
+        })
     }
     
     func getFoto(url: String)-> UIImage {
@@ -40,5 +45,5 @@ struct FilmesViewModel {
         let data = try? Data(contentsOf: url!)
         return UIImage(data: data ?? Data()) ?? UIImage()
     }
- 
+    
 }

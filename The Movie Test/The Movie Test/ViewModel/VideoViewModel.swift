@@ -20,10 +20,11 @@ struct VideoViewModel {
         loading.accept(true)
         REST.getVideo(idFilme: idFilme, completionHandler:{ videos in
             self.videos.accept(videos ?? [Video]())
+            self.loading.accept(false)
+            self.sucesso.accept("Filme Adcionado a lista")
         }, errorHandler: {
             self.error.accept("Erro Ocorrido")
         })
-        loading.accept(false)
     }
 
 }

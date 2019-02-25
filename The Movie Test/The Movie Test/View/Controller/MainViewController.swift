@@ -17,29 +17,61 @@ class MainViewController: UIViewController {
     var activityIndicator = UIActivityIndicatorView()
     var disposeBag = DisposeBag()
     var popModel = FilmesViewModel()
+    var vdeosModel = VideoViewModel()
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableview: UITableView!
+    
+    @IBOutlet weak var segmentedControl: UISegmentedControl!
+    
+    let refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.tintColor = .clear
+        refreshControl.addTarget(self, action: #selector(atualizar), for: .valueChanged)
+        
+        return refreshControl
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         doBindings()
+        if #available(iOS 10.0, *){
+            tableview.refreshControl = refreshControl
+        } else {
+            tableview.addSubview(refreshControl)
+        }
         self.tableview.register(UINib(nibName: "movieCell", bundle: nil), forCellReuseIdentifier: "celulaFilme")
         self.popModel.getFilmes(url: EnumURL.Populares)
     }
 
     @IBAction func sceneChange(_ sender: UISegmentedControl) {
-        if sender.selectedSegmentIndex == 0 {
-            self.popModel.filmes = BehaviorRelay<[Movie]>(value: [])
-            self.popModel.getFilmes(url: EnumURL.Populares)
-        } else if sender.selectedSegmentIndex == 1 {
-            self.popModel.filmes = BehaviorRelay<[Movie]>(value: [])
-            self.popModel.getFilmes(url: EnumURL.MelhoresNotas)
-        } else if sender.selectedSegmentIndex == 2 {
-            self.popModel.filmes = BehaviorRelay<[Movie]>(value: [])
-            self.popModel.getFilmes(url: EnumURL.EmCartaz)
-        }
+        buscarFilmes(url: getSegmento(segmento: sender.selectedSegmentIndex))
     }
-
+    
+    @objc func atualizar(){
+        buscarFilmes(url: getSegmento(segmento: (self.segmentedControl?.selectedSegmentIndex) ?? 0))
+        searchBar.text = ""
+    }
+    
+    func buscarFilmes(url: EnumURL){
+        self.popModel.filmes = BehaviorRelay<[Movie]>(value: [])
+        self.popModel.getFilmes(url: url)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    func getSegmento(segmento: Int) -> EnumURL{
+        if segmento == 0 {
+            return EnumURL.Populares
+        } else if segmento == 1 {
+            return EnumURL.MelhoresNotas
+        } else if segmento == 2 {
+            return EnumURL.EmCartaz
+        }
+        return EnumURL.Populares
+    }
+    
     func doBindings(){
         popModel.filmes.asObservable().bind(onNext:{ _ in
             self.tableview.reloadData()
@@ -48,27 +80,29 @@ class MainViewController: UIViewController {
         popModel.loading.asObservable().bind(onNext:{ loading in
             if loading {
                 self.tableview.reloadData()
-                // Activity Indicator
+
                 self.activityIndicator.center = self.view.center
                 self.activityIndicator.hidesWhenStopped = true
                 self.activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
                 self.view.addSubview(self.activityIndicator)
                 self.activityIndicator.startAnimating()
-                // Start Animation
-            }else {
-                // Stop Animation
+            } else {
                 self.tableview.reloadData()
+                self.refreshControl.endRefreshing()
                 self.activityIndicator.stopAnimating()
             }
         }).disposed(by: disposeBag)
+     
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let cell = segue.destination as? DetalheController{
-            cell.idFilme = sender as! Int
+            self.popModel.getFilme(idFilme: sender as? Int ?? 0, completion: {filme in
+                cell.Filme = filme ?? ResMovie()
+                cell.populaFilme()
+            })
         }
     }
-    
 }
 
 extension MainViewController: UITableViewDelegate{
@@ -97,11 +131,18 @@ extension MainViewController: UITableViewDataSource{
 }
 
 extension MainViewController: UISearchBarDelegate{
-    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         self.view.endEditing(true)
-        self.popModel.filmes = BehaviorRelay<[Movie]>(value: [])
-        self.popModel.getFilmes(url: EnumURL.Pesquisar(searchBar.text?.replacingOccurrences(of: " ", with: "+", options: .literal, range: nil) ?? ""))
-        searchBar.text = ""
+        self.buscarFilmes(url: EnumURL.Pesquisar(searchBar.text?.replacingOccurrences(of: " ", with: "+", options: .literal, range: nil) ?? ""))
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.count == 0 {
+            self.buscarFilmes(url: getSegmento(segmento: self.segmentedControl?.selectedSegmentIndex ?? 0))
+        }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        self.view.endEditing(true)
     }
 }

@@ -39,16 +39,19 @@ class REST {
     }
 
     static func getVideo(idFilme: Int, completionHandler: @escaping ([Video]?) -> (), errorHandler: @escaping () -> ()){
-        Alamofire.request(Constants.baseURL+EnumURL.Video(idFilme).path+Constants.api_key+Constants.endOfURL).responseArray(keyPath: "results") { (response: DataResponse<[Video]>) in
+        let url = Constants.baseURL+EnumURL.Video(idFilme).path+Constants.api_key+Constants.endOfURL
+        Alamofire.request(url).responseArray(keyPath: "results") { (response: DataResponse<[Video]>) in
             switch response.result {
-            case .success(let value):
-                if response.result.value?.isEmpty == false{
-                    completionHandler(value)
+                case .success(let value):
+                    if response.result.value?.isEmpty == false{
+                        print(value)
+                        completionHandler(value)
+                    }
+                case .failure(let error):
+                    print(error)
+                    errorHandler()
                 }
-            case .failure(_):
-                errorHandler()
             }
-        }
     }
     
 }

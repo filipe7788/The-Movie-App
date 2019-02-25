@@ -29,7 +29,6 @@
 		EB5ED0CB213884FF00401B45 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EB5ED07521387B3000401B45 /* LaunchScreen.storyboard */; };
 		EB5ED0CC2138850000401B45 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EB5ED07521387B3000401B45 /* LaunchScreen.storyboard */; };
 		EB5ED0DB2138852400401B45 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5ED06921387B2800401B45 /* AppDelegate.swift */; };
-		EB5ED0DC2138852800401B45 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EB5ED07821387B3000401B45 /* Info.plist */; };
 		EB5ED0DD2138852800401B45 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EB5ED07821387B3000401B45 /* Info.plist */; };
 		EB5ED0DE2138852900401B45 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EB5ED07821387B3000401B45 /* Info.plist */; };
 		EB5ED0DF2138852F00401B45 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EB5ED07321387B3000401B45 /* Assets.xcassets */; };
@@ -173,6 +172,7 @@
 		EB16757021FBBA6300D99D9C /* Cell */ = {
 			isa = PBXGroup;
 			children = (
+				EBCB8A08213CB13D00A3D588 /* CelulaFilme.swift */,
 				EB16756C21FBBA4600D99D9C /* movieCell.xib */,
 			);
 			path = Cell;
@@ -263,7 +263,6 @@
 			isa = PBXGroup;
 			children = (
 				EBA1873D21397458006331D3 /* MainViewController.swift */,
-				EBCB8A08213CB13D00A3D588 /* CelulaFilme.swift */,
 				EB49F97C2146A81F0068DE75 /* DetalheController.swift */,
 				EBFC2AA8215A4D16002B8924 /* TrailerTableViewCell.swift */,
 			);
@@ -392,7 +391,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0930;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = "Filipe Cruz";
 				TargetAttributes = {
 					EB5ED06521387B2800401B45 = {
@@ -436,7 +435,6 @@
 				EB5ED07721387B3000401B45 /* LaunchScreen.storyboard in Resources */,
 				EB16756D21FBBA4600D99D9C /* movieCell.xib in Resources */,
 				EB5ED07421387B3000401B45 /* Assets.xcassets in Resources */,
-				EB5ED0DC2138852800401B45 /* Info.plist in Resources */,
 				EB5ED0EE21389A9000401B45 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
