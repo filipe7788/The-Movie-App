@@ -9,15 +9,12 @@
 import UIKit
 import RxSwift
 
-class DetalheController: UIViewController {
+class DetalheController: BaseViewController {
 
     var Filme: ResMovie = ResMovie()
-    var model = FilmesViewModel()
-    var videosModel = VideoViewModel()
-    var disposeBag = DisposeBag()
     
-    var activityIndicator = UIActivityIndicatorView()
-
+    var videosModel = VideoViewModel()
+    
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var contentView: UIView!
     @IBOutlet weak var tableview: UITableView!
@@ -31,35 +28,44 @@ class DetalheController: UIViewController {
     @IBOutlet weak var Media: UILabel!
     @IBOutlet weak var Status: UILabel!
     
+    @IBOutlet weak var labelDescricao: UILabel!
+    @IBOutlet weak var labelLançamento: UILabel!
+    @IBOutlet weak var labelMedia: UILabel!
+    @IBOutlet weak var labelStatus: UILabel!
+    @IBOutlet weak var labelTrailers: UILabel!
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        doBindingsVideo()
+        stopActivityIndicator()
+        labelMedia.text = "Média"
+        labelDescricao.text = "Descrição"
+        labelStatus.text = "Status"
+        labelTrailer.text = "Trailers"
+        labelLançamento.text = "Data de Lançamento"
     }
     
-    func populaFilme(){
-        self.TituloFilme.text = self.Filme.Nome
-        self.bannerFilme?.image = self.model.getFoto(url: Filme.Banner ?? "")
-        self.Descricao.text = self.Filme.Descricao
-        self.DataLancamento.text = self.Filme.DataLancamento
-        self.Media.text = self.Filme.MediaNota?.description
-        self.Status.text = self.Filme.Status
-        videosModel.getVideos(idFilme: self.Filme.ID ?? 0)
+    override func viewWillAppear(_ animated: Bool) {
+       startActivityIndicator()
     }
     
-    func doBindingsVideo(){
+    override func doBindings(){
+
         videosModel.videos.asObservable().bind(onNext:{ _ in
+            self.tableview.reloadData()
+        }).disposed(by: disposeBag)
+        
+        videosModel.loading.asObservable().bind(onNext:{ loading in
+            if loading {
+                super.startActivityIndicator()
+            } else {
+                self.refreshControl.endRefreshing()
+                super.stopActivityIndicator()
+            }
             self.tableview.reloadData()
         }).disposed(by: disposeBag)
     }
     
-    func startActivityIndicator(){
-        self.activityIndicator.center = self.scrollView.center
-        self.activityIndicator.hidesWhenStopped = true
-        self.activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
-        self.scrollView.addSubview(self.activityIndicator)
-        activityIndicator.startAnimating()
-    }
-
 }
 
 extension DetalheController: UITableViewDataSource{

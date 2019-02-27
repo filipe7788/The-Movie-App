@@ -44,7 +44,6 @@ class REST {
             switch response.result {
                 case .success(let value):
                     if response.result.value?.isEmpty == false{
-                        print(value)
                         completionHandler(value)
                     }
                 case .failure(let error):

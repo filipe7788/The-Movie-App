@@ -23,6 +23,7 @@ struct VideoViewModel {
             self.loading.accept(false)
             self.sucesso.accept("Filme Adcionado a lista")
         }, errorHandler: {
+            self.loading.accept(false)
             self.error.accept("Erro Ocorrido")
         })
     }
