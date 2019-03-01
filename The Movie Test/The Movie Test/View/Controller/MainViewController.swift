@@ -99,7 +99,6 @@ class MainViewController: BaseViewController {
                 super.stopActivityIndicator()
             }
         }).disposed(by: disposeBag)
-     
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -132,7 +131,6 @@ extension MainViewController: UITableViewDataSource{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableview.dequeueReusableCell(withIdentifier: "celulaFilme", for: indexPath) as? CelulaFilme
 
-        
         let filme = self.popModel.filmes.value[indexPath.row]
         cell?.nome.text = filme.Nome
         cell?.descricao.text = filme.Descricao
